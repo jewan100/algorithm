@@ -7,7 +7,6 @@ public class Main {
 		ArrayList<Integer> al = new ArrayList<>();
 		for (int i = 0; i < n; i++)
 			al.add(read());
-		al.sort((o1, o2) -> o2 - o1);
 		int rank = 1;
 		for (int i = 0; i < n; i++) {
 			if (al.get(i) > s)
