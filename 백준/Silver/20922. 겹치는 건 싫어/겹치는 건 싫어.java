@@ -2,6 +2,10 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 		int n = read(), k = read(), l = 0, maxLen = 0;
+		if (n <= k) {
+			System.out.println(n);
+			return;
+		}
 		int[] arr = new int[n], num = new int[100_001];
 		for (int r = 0; r < n; r++) {
 			arr[r] = read();
