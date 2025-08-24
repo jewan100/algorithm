@@ -1,43 +1,16 @@
-import java.util.HashMap;
-import java.util.HashSet;
-
 public class Main {
 
-	static int n, k;
-	static HashMap<Integer, Integer> hm;
-	static HashSet<Integer> hs;
 	public static void main(String[] args) throws Exception {
-		n = read();
-		k = read();
-		int[] arr = new int[n];
-		for (int i = 0; i < n; i++)
-			arr[i] = read();
-		hm = new HashMap<>();
-		hs = new HashSet<>();
-		int l = 0, r = 0, maxLen = 0;
-		while (r < n) {
-			hm.putIfAbsent(arr[r], 0);
-			hm.replace(arr[r], hm.get(arr[r]) + 1);
-			if (hm.get(arr[r]) > k)
-				hs.add(arr[r]);
-			while (!isValid()) {
-				hm.replace(arr[l], hm.get(arr[l]) - 1);
-				if (hs.contains(arr[l]) && hm.get(arr[l]) <= k)
-					hs.remove(arr[l]);
-				l++;
-			}
+		int n = read(), k = read(), l = 0, maxLen = 0;
+		int[] arr = new int[n], num = new int[100_001];
+		for (int r = 0; r < n; r++) {
+			arr[r] = read();
+			num[arr[r]]++;
+			while (num[arr[r]] > k)
+				num[arr[l++]]--;
 			maxLen = Math.max(maxLen, r - l + 1);
-			r++;
 		}
 		System.out.println(maxLen);
-	}
-
-	private static boolean isValid() {
-		for (int t : hs)
-			if (hm.get(t) >= k)
-				return false;
-		return true;
-
 	}
 
 	private static int read() throws Exception {
