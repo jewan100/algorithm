@@ -1,46 +1,31 @@
-import java.util.Map;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
-import java.util.TreeMap;
+import java.util.PriorityQueue;
 class Solution {
-    public String[] solution(String[][] tickets) {
-        int len = tickets.length + 1;
-        String[] answer = new String[len];
-        Map<String, TreeMap<String, Integer>> ticketMap = buildTicketMap(tickets);
-        answer[0] = "ICN";
-        dfs(ticketMap, answer, "ICN", 1);
-        return answer;
-    }
-
-    private Map<String, TreeMap<String, Integer>> buildTicketMap(String[][] tickets) {
-        Map<String, TreeMap<String, Integer>> ticketMap = new HashMap<>();
-        for (String[] ticket : tickets) {
-            String from = ticket[0];
-            String to = ticket[1];
-            ticketMap.putIfAbsent(from, new TreeMap<>());
-            TreeMap<String, Integer> fromMap = ticketMap.get(from);
-            fromMap.put(to, fromMap.getOrDefault(to, 0) + 1);
-        }
-        return ticketMap;
-    }
-
-    public boolean dfs(Map<String, TreeMap<String, Integer>> ticketMap, String[] answer, String cur,
-            int depth) {
-        if (depth == answer.length) {
-            return true;
-        }
-        TreeMap<String, Integer> fromMap = ticketMap.get(cur);
-        if (fromMap != null) {
-            for (String to : fromMap.keySet()) {
-                if (fromMap.get(to) > 0) {
-                    fromMap.replace(to, fromMap.get(to) - 1);
-                    answer[depth] = to;
-                    if (dfs(ticketMap, answer, to, depth + 1)) {
-                        return true;
-                    }
-                    fromMap.replace(to, fromMap.get(to) + 1);
-                }
-            }
-        }
-        return false;
-    }
+	public String[] solution(String[][] tickets) {
+		HashMap<String, PriorityQueue<String>> hm = new HashMap<>();
+		for (String[] ticket : tickets) {
+			String from = ticket[0];
+			String to = ticket[1];
+			hm.putIfAbsent(from, new PriorityQueue<>());
+			hm.putIfAbsent(to, new PriorityQueue<>());
+			hm.get(from).add(to);
+		}
+		Deque<String> dq = new ArrayDeque<>();
+		Deque<String> eulerPath = new ArrayDeque<>();
+		dq.offer("ICN");
+		while (!dq.isEmpty()) {
+			String from = dq.peekLast();
+			if (!hm.get(from).isEmpty())
+				dq.offer(hm.get(from).poll());
+			else
+				eulerPath.offerFirst(dq.pollLast());
+		}
+		int len = eulerPath.size();
+		String[] answer = new String[len];
+		for (int i = 0; i < len; i++)
+			answer[i] = eulerPath.poll();
+		return answer;
+	}
 }
