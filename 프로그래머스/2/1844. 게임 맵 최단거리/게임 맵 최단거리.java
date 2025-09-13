@@ -1,33 +1,30 @@
-import java.util.Queue;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 class Solution {
+    static int n, m;
+	static int[] dy = {1, -1, 0, 0}, dx = {0, 0, 1, -1};
     public int solution(int[][] maps) {
-        int answer = 1;
-        int m = maps.length - 1;
-        int n = maps[0].length - 1;
-        Queue<int[]> que = new LinkedList<>();
-        Queue<int[]> tmp = new LinkedList<>();
-        que.add(new int[2]);
-        while(!que.isEmpty()){
-            int[] p = que.poll();
-            if(maps[p[0]][p[1]] == 1){
-                maps[p[0]][p[1]] = 0;
-                if(p[0] == m && p[1] == n) break;
-                if(0 < p[0] && maps[p[0] - 1][p[1]] == 1) tmp.add(new int[]{p[0] - 1, p[1]}); // U
-                if(p[0] < m && maps[p[0] + 1][p[1]] == 1) tmp.add(new int[]{p[0] + 1, p[1]}); // D
-                if(0 < p[1] && maps[p[0]][p[1] - 1] == 1) tmp.add(new int[]{p[0], p[1] - 1}); // R
-                if(p[1] < n && maps[p[0]][p[1] + 1] == 1) tmp.add(new int[]{p[0], p[1] + 1}); // L   
-            }
-            if(que.isEmpty()){
-                if(tmp.isEmpty()){
-                    answer = -1;
-                    break;
-                }
-                que.addAll(tmp);
-                answer++;
-                tmp.clear();
-            }
-        }
-        return answer;
+        n = maps.length;
+		m = maps[0].length;
+		boolean[][] visited = new boolean[n][m];
+		Deque<int[]> dq = new ArrayDeque<>();
+		dq.offer(new int[]{0, 0, 1});
+		while (!dq.isEmpty()) {
+			int[] now = dq.poll();
+			int y = now[0], x = now[1], t = now[2];
+			if (y == n - 1 && x == m - 1)
+				return t;
+			for (int i = 0; i < 4; i++) {
+				int ny = y + dy[i], nx = x + dx[i];
+				if (isValid(ny, nx) && maps[ny][nx] == 1 && !visited[ny][nx]) {
+					visited[ny][nx] = true;
+					dq.offer(new int[]{ny, nx, t + 1});
+				}
+			}
+		}
+		return -1;
     }
+	private static boolean isValid(int y, int x) {
+		return 0 <= y && y < n && 0 <= x && x < m;
+	}
 }
