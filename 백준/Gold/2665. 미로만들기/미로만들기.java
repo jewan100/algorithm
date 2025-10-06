@@ -18,40 +18,28 @@ public class Main {
 			for (int j = 0; j < n; j++)
 				board[i][j] = line.charAt(j) == '1';
 		}
-		int cnt = 0;
-		while (cnt <= Math.pow(n, 2)) {
-			if (bfs(cnt))
-				break;
-			cnt++;
-		}
-		System.out.println(cnt);
-	}
-
-	private static boolean bfs(int cnt) {
 		Deque<int[]> dq = new ArrayDeque<>();
-		dq.offer(new int[]{0, 0, cnt});
-		boolean[][][] visited = new boolean[cnt + 1][n][n];
-		visited[cnt][0][0] = true;
+		dq.offer(new int[3]);
+		boolean[][] visited = new boolean[n][n];
+		visited[0][0] = true;
 		while (!dq.isEmpty()) {
 			int[] cur = dq.poll();
-			int y = cur[0], x = cur[1], t = cur[2];
-			if (y == n - 1 && x == n - 1)
-				return true;
+			int y = cur[0], x = cur[1], cnt = cur[2];
+			if (y == n - 1 && x == n - 1) {
+				System.out.println(cnt);
+				return;
+			}
 			for (int i = 0; i < 4; i++) {
 				int ny = y + dy[i], nx = x + dx[i];
-				if (isValid(ny, nx)) {
-					if (board[ny][nx] && !visited[t][ny][nx]) {
-						dq.offer(new int[]{ny, nx, t});
-						visited[t][ny][nx] = true;
-					}
-					if (!board[ny][nx] && t > 0 && !visited[t - 1][ny][nx]) {
-						dq.offer(new int[]{ny, nx, t - 1});
-						visited[t - 1][ny][nx] = true;
-					}
+				if (isValid(ny, nx) && !visited[ny][nx]) {
+					if (board[ny][nx])
+						dq.offerFirst(new int[]{ny, nx, cnt});
+					else
+						dq.offerLast(new int[]{ny, nx, cnt + 1});
+					visited[ny][nx] = true;
 				}
 			}
 		}
-		return false;
 	}
 
 	private static boolean isValid(int y, int x) {
