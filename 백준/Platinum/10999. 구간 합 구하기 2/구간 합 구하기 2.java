@@ -1,31 +1,22 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
-
 public class Main {
 
 	static long[] arr;
 	static long tree[], lazy[];
 
 	public static void main(String[] args) throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		int n = Integer.parseInt(st.nextToken()), m = Integer.parseInt(st.nextToken()),
-				k = Integer.parseInt(st.nextToken());
+		int n = (int) read(), m = (int) read(), k = (int) read();
 		arr = new long[n];
 		tree = new long[n << 2];
 		lazy = new long[n << 2];
 		for (int i = 0; i < n; i++)
-			arr[i] = Long.parseLong(br.readLine());
+			arr[i] = read();
 		build(1, 0, n - 1);
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < m + k; i++) {
-			st = new StringTokenizer(br.readLine());
-			int op = Integer.parseInt(st.nextToken());
-			int a = Integer.parseInt(st.nextToken()), b = Integer.parseInt(st.nextToken());
+			int op = (int) read(), a = (int) read(), b = (int) read();
 			int l = Math.min(a, b) - 1, r = Math.max(a, b) - 1;
 			if (op == 1) {
-				long c = Long.parseLong(st.nextToken());
+				long c = read();
 				update(1, 0, n - 1, l, r, c);
 			} else
 				sb.append(query(1, 0, n - 1, l, r)).append("\n");
@@ -74,5 +65,17 @@ public class Main {
 			lazy[idx << 1] += val;
 			lazy[(idx << 1) + 1] += val;
 		}
+	}
+
+	private static long read() throws Exception {
+		long c, n = System.in.read() & 15;
+		boolean m = n == 13;
+		if (m)
+			n = System.in.read() & 15;
+		while ((c = System.in.read()) >= 48)
+			n = (n << 3) + (n << 1) + (c & 15);
+		if (c == 13)
+			System.in.read();
+		return m ? ~n + 1 : n;
 	}
 }
