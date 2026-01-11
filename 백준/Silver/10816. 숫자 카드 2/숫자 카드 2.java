@@ -1,36 +1,29 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.StringTokenizer;
-
 public class Main {
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        HashMap<String, Integer> hm = new HashMap<>();
-        br.readLine();
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        while (st.hasMoreTokens()) {
-            String str = st.nextToken();
-            if (hm.containsKey(str)) {
-                hm.replace(str, hm.get(str) + 1);
-            } else {
-                hm.put(str, 1);
-            }
-        }
-        br.readLine();
-        st = new StringTokenizer(br.readLine());
-        StringBuilder sb = new StringBuilder();
-        while (st.hasMoreTokens()) {
-            String str = st.nextToken();
-            if (hm.containsKey(str)) {
-                sb.append(hm.get(str));
-            } else {
-                sb.append("0");
-            }
-            sb.append(" ");
-        }
-        System.out.println(sb.toString());
-        br.close();
-    }
+
+	static final int DIFF = 10_000_000;
+
+	public static void main(String[] args) throws Exception {
+		int n = read();
+		int[] arr = new int[(DIFF << 1) + 1];
+		for (int i = 0; i < n; i++)
+			arr[read() + DIFF]++;
+		int m = read();
+		StringBuilder sb = new StringBuilder();
+		while (m-- > 0) {
+			sb.append(arr[read() + DIFF]).append(" ");
+		}
+		System.out.println(sb);
+	}
+
+	private static int read() throws Exception {
+		int c, n = System.in.read() & 15;
+		boolean m = n == 13;
+		if (m)
+			n = System.in.read() & 15;
+		while ((c = System.in.read()) >= 48)
+			n = (n << 3) + (n << 1) + (c & 15);
+		if (c == 13)
+			System.in.read();
+		return m ? ~n + 1 : n;
+	}
 }
