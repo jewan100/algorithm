@@ -29,10 +29,12 @@ public class Main {
 			if (money < arr[i]) {
 				cnt++;
 				money = target;
+				if (cnt > m)
+					return false;
 			}
 			money -= arr[i];
 		}
-		return cnt <= m;
+		return true;
 	}
 
 	private static int read() throws Exception {
