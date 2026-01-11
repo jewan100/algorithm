@@ -1,67 +1,54 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.PriorityQueue;
-import java.util.StringTokenizer;
 
 public class Main {
 
-    static class Node {
+	static final int INF = Integer.MAX_VALUE >> 2;
 
-        int to;
-        int weight;
+	static int n, m, k;
+	static ArrayList<ArrayList<int[]>> al = new ArrayList<>();
 
-        public Node(int to, int weight) {
-            this.to = to;
-            this.weight = weight;
-        }
-    }
+	public static void main(String[] args) throws Exception {
+		n = read();
+		m = read();
+		k = read();
+		for (int i = 0; i < n + 1; i++)
+			al.add(new ArrayList<>());
+		for (int i = 0; i < m; i++) {
+			int u = read(), v = read(), w = read();
+			al.get(u).add(new int[]{v, w});
+		}
+		int[] dist = new int[n + 1];
+		Arrays.fill(dist, INF);
+		dist[k] = 0;
+		PriorityQueue<Integer> pq = new PriorityQueue<>((o1, o2) -> dist[o1] - dist[o2]);
+		pq.offer(k);
+		while (!pq.isEmpty()) {
+			int u = pq.poll();
+			for (int[] next : al.get(u)) {
+				int v = next[0], w = next[1];
+				if (dist[v] > dist[u] + w) {
+					dist[v] = dist[u] + w;
+					pq.add(v);
+				}
+			}
+		}
+		StringBuilder sb = new StringBuilder();
+		for (int i = 1; i < n + 1; i++)
+			if (dist[i] == INF)
+				sb.append("INF").append("\n");
+			else
+				sb.append(dist[i]).append("\n");
+		System.out.println(sb);
+	}
 
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        int n = Integer.parseInt(st.nextToken());
-        int m = Integer.parseInt(st.nextToken());
-        int s = Integer.parseInt(br.readLine());
-        List<List<Node>> graph = new ArrayList<>();
-        boolean[] visited = new boolean[n + 1];
-        int[] dist = new int[n + 1];
-        for (int i = 0; i <= n; i++) {
-            graph.add(new ArrayList<>());
-            dist[i] = Integer.MAX_VALUE;
-        }
-        for (int i = 0; i < m; i++) {
-            st = new StringTokenizer(br.readLine());
-            int v = Integer.parseInt(st.nextToken());
-            int u = Integer.parseInt(st.nextToken());
-            int w = Integer.parseInt(st.nextToken());
-            graph.get(v).add(new Node(u, w));
-        }
-        dist[s] = 0;
-        PriorityQueue<Node> pq = new PriorityQueue<>((v1, v2) -> v1.weight - v2.weight);
-        pq.offer(new Node(s, 0));
-        while (!pq.isEmpty()) {
-            Node cur = pq.poll();
-            int v = cur.to;
-            int w = cur.weight;
-            if (visited[v]) {
-                continue;
-            }
-            visited[v] = true;
-            for (Node node : graph.get(v)) {
-                if (dist[node.to] > node.weight + w) {
-                    dist[node.to] = node.weight + w;
-                    pq.offer(new Node(node.to, node.weight + w));
-                }
-            }
-        }
-        StringBuilder sb = new StringBuilder();
-        for (int i = 1; i <= n; i++) {
-            sb.append(dist[i] != Integer.MAX_VALUE ? dist[i] : "INF").append("\n");
-        }
-        System.out.println(sb);
-        br.close();
-    }
+	private static int read() throws Exception {
+		int c, n = System.in.read() & 15;
+		while ((c = System.in.read()) >= 48)
+			n = (n << 3) + (n << 1) + (c & 15);
+		if (c == 13)
+			System.in.read();
+		return n;
+	}
 }
