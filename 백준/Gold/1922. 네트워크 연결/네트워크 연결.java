@@ -3,49 +3,46 @@ import java.util.PriorityQueue;
 
 public class Main {
 
-    static class Edge {
-        int v, w;
+	static int n, m;
+	static ArrayList<ArrayList<int[]>> al = new ArrayList<>();
 
-        Edge(int v, int w) {
-            this.v = v;
-            this.w = w;
-        }
-    }
+	public static void main(String[] args) throws Exception {
+		n = read();
+		m = read();
+		for (int i = 0; i < n + 1; i++)
+			al.add(new ArrayList<>());
+		for (int i = 0; i < m; i++) {
+			int a = read(), b = read(), c = read();
+			al.get(a).add(new int[]{b, c});
+			al.get(b).add(new int[]{a, c});
+		}
+		int sum = 0, cnt = 0;
+		boolean[] isMst = new boolean[n + 1];
+		PriorityQueue<int[]> pq = new PriorityQueue<>((o1, o2) -> o1[1] - o2[1]);
+		pq.offer(new int[]{1, 0});
+		while (!pq.isEmpty()) {
+			int[] cur = pq.poll();
+			if (isMst[cur[0]])
+				continue;
+			isMst[cur[0]] = true;
+			cnt++;
+			sum += cur[1];
+			if (cnt == n)
+				break;
+			for (int[] next : al.get(cur[0])) {
+				if (!isMst[next[0]])
+					pq.offer(next);
+			}
+		}
+		System.out.println(sum);
+	}
 
-    public static void main(String[] args) throws Exception {
-        int n = read(), m = read();
-        ArrayList<ArrayList<Edge>> graph = new ArrayList<>();
-        for (int i = 0; i < n + 1; i++)
-            graph.add(new ArrayList<>());
-        for (int i = 0; i < m; i++) {
-            int u = read(), v = read(), w = read();
-            graph.get(u).add(new Edge(v, w));
-            graph.get(v).add(new Edge(u, w));
-        }
-        PriorityQueue<Edge> pq = new PriorityQueue<>((o1, o2) -> o1.w - o2.w);
-        boolean[] visited = new boolean[n + 1];
-        pq.offer(new Edge(1, 0));
-        int minWeight = 0;
-        while (!pq.isEmpty()) {
-            Edge cur = pq.poll();
-            if (visited[cur.v])
-                continue;
-            minWeight += cur.w;
-            visited[cur.v] = true;
-            for (Edge edge : graph.get(cur.v))
-                if (!visited[edge.v]) {
-                    pq.offer(edge);
-                }
-        }
-        System.out.println(minWeight);
-    }
-
-    private static int read() throws Exception {
-        int c, n = System.in.read() & 15;
-        while ((c = System.in.read()) >= 48)
-            n = (n << 3) + (n << 1) + (c & 15);
-        if (c == 13)
-            System.in.read();
-        return n;
-    }
+	private static int read() throws Exception {
+		int c, n = System.in.read() & 15;
+		while ((c = System.in.read()) >= 48)
+			n = (n << 3) + (n << 1) + (c & 15);
+		if (c == 13)
+			System.in.read();
+		return n;
+	}
 }
