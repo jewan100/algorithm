@@ -3,41 +3,54 @@ import java.util.PriorityQueue;
 
 public class Main {
 
-    public static void main(String[] args) throws Exception {
-        int n = read(), m = read();
-        ArrayList<ArrayList<int[]>> graph = new ArrayList<>();
-        for (int i = 0; i <= n; i++)
-            graph.add(new ArrayList<>());
-        for (int i = 0; i < m; i++) {
-            int u = read(), v = read(), w = read();
-            graph.get(u).add(new int[] { v, w });
-            graph.get(v).add(new int[] { u, w });
-        }
+	static int v, e;
+	static int[] parent;
 
-        boolean[] visited = new boolean[n + 1];
-        PriorityQueue<int[]> pq = new PriorityQueue<>((o1, o2) -> o1[1] - o2[1]);
-        pq.offer(new int[] { 1, 0 });
-        int min = 0;
-        while (!pq.isEmpty()) {
-            int[] u = pq.poll();
-            if (visited[u[0]])
-                continue;
-            visited[u[0]] = true;
-            min += u[1];
-            for (int[] v : graph.get(u[0]))
-                if (!visited[v[0]])
-                    pq.offer(v);
-        }
-        System.out.println(min);
-    }
+	public static void main(String[] args) throws Exception {
+		v = read();
+		e = read();
+		parent = new int[v + 1];
+		for (int i = 0; i < v + 1; i++)
+			parent[i] = i;
+		ArrayList<int[]> al = new ArrayList<>();
+		for (int i = 0; i < e; i++) {
+			int a = read(), b = read(), c = read();
+			al.add(new int[]{a, b, c});
+		}
+		long sum = 0;
+		PriorityQueue<int[]> pq = new PriorityQueue<>((o1, o2) -> o1[2] - o2[2]);
+		pq.addAll(al);
+		while (!pq.isEmpty()) {
+			int[] edge = pq.poll();
+			if (union(edge[0], edge[1]))
+				sum += edge[2];
+		}
+		System.out.println(sum);
+	}
 
-    private static int read() throws Exception {
-        int c, n = System.in.read() & 15;
-        boolean m = n == 13;
-        if (m)
-            n = System.in.read() & 15;
-        while ((c = System.in.read()) >= 48)
-            n = (n << 3) + (n << 1) + (c & 15);
-        return m ? ~n + 1 : n;
-    }
+	private static int find(int x) {
+		if (parent[x] == x)
+			return parent[x];
+		return parent[x] = find(parent[x]);
+	}
+
+	private static boolean union(int y, int x) {
+		int rootY = find(y), rootX = find(x);
+		if (rootY == rootX)
+			return false;
+		parent[rootX] = rootY;
+		return true;
+	}
+
+	private static int read() throws Exception {
+		int c, n = System.in.read() & 15;
+		boolean m = n == 13;
+		if (m)
+			n = System.in.read() & 15;
+		while ((c = System.in.read()) >= 48)
+			n = (n << 3) + (n << 1) + (c & 15);
+		if (c == 13)
+			System.in.read();
+		return m ? ~n + 1 : n;
+	}
 }
