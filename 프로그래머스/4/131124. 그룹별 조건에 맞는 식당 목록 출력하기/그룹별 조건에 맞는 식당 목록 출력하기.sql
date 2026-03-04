@@ -1,23 +1,31 @@
+WITH CTE AS (
+    SELECT
+        COUNT(*) AS CNT
+        , MEMBER_ID
+    FROM
+        REST_REVIEW
+    GROUP BY
+        MEMBER_ID
+    ORDER BY
+        CNT DESC
+    LIMIT 1
+)
+
 SELECT
-    MEMBER_NAME,
-    REVIEW_TEXT,
-    DATE_FORMAT(REVIEW_DATE, '%Y-%m-%d') REVIEW_DATE
+    B.MEMBER_NAME
+    , A.REVIEW_TEXT
+    , DATE_FORMAT(A.REVIEW_DATE, "%Y-%m-%d") REVIEW_DATE
 FROM
-    MEMBER_PROFILE A
-    INNER JOIN REST_REVIEW B
+    REST_REVIEW A
+    JOIN MEMBER_PROFILE B
         ON A.MEMBER_ID = B.MEMBER_ID
 WHERE
-    A.MEMBER_ID = (
-        SELECT 
+    A.MEMBER_ID IN (
+        SELECT
             MEMBER_ID
         FROM
-            REST_REVIEW
-        GROUP BY 
-            MEMBER_ID
-        ORDER BY
-            COUNT(MEMBER_ID) DESC
-        LIMIT 1
+            CTE
     )
 ORDER BY
-    REVIEW_DATE,
-    REVIEW_TEXT
+    REVIEW_DATE
+    , REVIEW_TEXT
